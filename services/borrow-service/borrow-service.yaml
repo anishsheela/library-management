@@ -1,0 +1,35 @@
+# Borrow Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: borrow-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: borrow-service
+  template:
+    metadata:
+      labels:
+        app: borrow-service
+    spec:
+      containers:
+      - name: borrow-service
+        image: your-image:latest  # Replace with actual built image
+        ports:
+        - containerPort: 8080
+---
+# Borrow Service Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: borrow-service
+spec:
+  selector:
+    app: borrow-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
