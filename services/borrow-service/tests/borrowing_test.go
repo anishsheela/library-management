@@ -7,7 +7,7 @@ import (
     "net/http/httptest"
     "strings"
     "testing"
-    "borrowing-service/internal/controllers"
+    "borrow-service/internal/controllers"
 )
 
 func TestBorrowBook(t *testing.T) {
