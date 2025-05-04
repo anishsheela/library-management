@@ -1,4 +1,4 @@
-FROM golang:1.21 AS builder
+FROM golang:1.24 AS builder
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ RUN go mod download
 COPY . .
 
 # Build the application
-RUN go build -o book-service
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o book-service ./cmd/main.go
 
 # Use a minimal image for production
 FROM alpine:latest
@@ -21,7 +21,7 @@ WORKDIR /root/
 COPY --from=builder /app/book-service .
 
 # Expose the service port
-EXPOSE 5000
+EXPOSE 5001
 
 # Start the application
 CMD ["./book-service"]
