@@ -7,6 +7,7 @@ import (
     "fmt"
     "time"
     "github.com/gorilla/mux"
+    "bytes"
 )
 
 type BorrowingInfo struct {
@@ -44,6 +45,7 @@ func BorrowBook(w http.ResponseWriter, r *http.Request) {
         return
     }
     jsonBody := bytes.NewBuffer([]byte(`{"available":false}`))
+    updateBookURL := fmt.Sprintf("%s/books/%s", bookServiceURL, request.BookID)
 	req, _ := http.NewRequest("PUT", updateBookURL, jsonBody)
     httpClient.Do(req)
     w.WriteHeader(http.StatusOK)
@@ -113,7 +115,6 @@ func GetOverdueBorrowings(w http.ResponseWriter, r *http.Request) {
     }
     defer rows.Close()
     overdueBorrowings := make(map[string][]BorrowingInfo)
-    currentTime := time.Now()
     for rows.Next() {
         var userID string
         var info BorrowingInfo
