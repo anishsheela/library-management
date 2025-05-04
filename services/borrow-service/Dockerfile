@@ -1,20 +1,19 @@
 # Use official Golang image
-FROM golang:1.21 AS builder
+FROM golang:1.24 AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Copy Go modules files
+# Copy go.mod and go.sum first to download dependencies
 COPY go.mod go.sum ./
-
-# Download dependencies
 RUN go mod download
 
-# Copy source code
+# Copy the entire service directory
 COPY . .
 
-# Build the application
-RUN go build -o borrow-service
+# Build the binary from the cmd folder with static linking
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o borrow-service ./cmd/main.go
+
 
 # Use minimal image for production
 FROM alpine:latest

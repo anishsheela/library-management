@@ -20,6 +20,6 @@ func main() {
     router.HandleFunc("/books/{bookId}", controllers.UpdateBookAvailability).Methods("PUT") 
     router.HandleFunc("/books/{bookId}", controllers.DeleteBook).Methods("DELETE")
 
-    fmt.Println("Book Service running on port 5000...")
-    log.Fatal(http.ListenAndServe(":5000", router))
+    fmt.Println("Book Service running on port 5001...")
+    log.Fatal(http.ListenAndServe(":5001", router))
 }

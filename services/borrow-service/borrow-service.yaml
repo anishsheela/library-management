@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - name: borrow-service
-        image: your-image:latest  # Replace with actual built image
+        image: library/borrow-service:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
 ---
