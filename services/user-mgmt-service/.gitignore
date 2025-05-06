@@ -1,0 +1,45 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.db
+*.sqlite3
+*.log
+
+# Django
+*.log
+*.pot
+*.pyc
+*.pyo
+__pycache__/
+db.sqlite3
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+*.env
+
+# IDEs and Editors
+.vscode/
+.idea/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Coverage reports
+.coverage
+.coverage.*
+nosetests.xml
+pytest.xml
+cover/
+
+# Other
+*.bak
+*.swp
