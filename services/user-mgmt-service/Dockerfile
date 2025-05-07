@@ -21,4 +21,4 @@ EXPOSE 8000
 
 ENV DJANGO_SETTINGS_MODULE=user_service.settings
 
-CMD ["python", "-m", "django", "runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["/code/entry_point.sh"]
