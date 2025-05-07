@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-# Install system dependencies required for building mysqlclient
+# Install system dependencies for mysqlclient
 RUN apt-get update && apt-get install -y \
     build-essential \
     libmariadb-dev \
@@ -10,12 +10,13 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /code
 
 COPY requirements.txt /code/
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 COPY . /code/
 
-COPY . .
+# Copy the JWKS file if needed in a specific location
+COPY jwks.json /code/jwks.json
 
-# Copy the JWKS file into the container
-COPY jwks.json /app/jwks.json
+EXPOSE 8000
+
+CMD ["python", "-m", "django", "runserver", "0.0.0.0:8000"]

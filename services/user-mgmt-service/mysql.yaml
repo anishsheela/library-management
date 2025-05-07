@@ -1,0 +1,73 @@
+# Persistent Volume for MySQL
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: user-mgmt-db-pv
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/mnt/data/user-mgmt-db"
+---
+# Persistent Volume Claim for MySQL
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: user-mgmt-db-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+# MySQL Deployment for Borrow Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-mgmt-db
+spec:
+  selector:
+    matchLabels:
+      app: user-mgmt-db
+  template:
+    metadata:
+      labels:
+        app: user-mgmt-db
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: rootpass
+        - name: MYSQL_DATABASE
+          value: user-mgmt_service
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: password
+        volumeMounts:
+        - name: user-mgmt-db-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: user-mgmt-db-storage
+        persistentVolumeClaim:
+          claimName: user-mgmt-db-pvc
+---
+# MySQL Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-mgmt-db
+spec:
+  selector:
+    app: user-mgmt-db
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  type: ClusterIP
