@@ -29,10 +29,21 @@ func BorrowBook(w http.ResponseWriter, r *http.Request) {
     bookURL := fmt.Sprintf("%s/books/%s", bookServiceURL, request.BookID)
     resp, err := httpClient.Get(bookURL)
     if err != nil || resp.StatusCode != http.StatusOK {
-        http.Error(w, "Book not available", http.StatusBadRequest)
+        http.Error(w, "Call to Book service failed", http.StatusBadRequest)
         return
     }
     defer resp.Body.Close()
+    var bookData struct {
+        Available bool `json:"available"`
+    }
+    if err := json.NewDecoder(resp.Body).Decode(&bookData); err != nil {
+        http.Error(w, "Error parsing book details received", http.StatusInternalServerError)
+        return
+    }
+    if !bookData.Available {
+        http.Error(w, "Book is already borrowed, kindly check after a few days", http.StatusBadRequest)
+        return
+    }
     stmt, err := db.DB.Prepare("INSERT INTO borrowings (user_id, book_id, borrow_date) VALUES (?, ?, NOW())")
     if err != nil {
         http.Error(w, "DB query preparation failed", http.StatusInternalServerError)
@@ -59,6 +70,12 @@ func ReturnBook(w http.ResponseWriter, r *http.Request) {
     }
     if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
         http.Error(w, "Invalid request format", http.StatusBadRequest)
+        return
+    }
+    row := db.DB.QueryRow("SELECT COUNT(*) FROM borrowings WHERE user_id=? AND book_id=?", request.UserID, request.BookID)
+    var count int
+    if err := row.Scan(&count); err != nil || count == 0 {
+        http.Error(w, "Cannot return a book that was never borrowed", http.StatusBadRequest)
         return
     }
     stmt, err := db.DB.Prepare("DELETE FROM borrowings WHERE user_id=? AND book_id=?")
