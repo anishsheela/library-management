@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-px=dz(=)(h$*_dj2qu*(*u$72^rw-132^y0k5_g=!iwod!md5$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -99,8 +99,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'user_service_db',
         'USER': 'user',
-        'PASSWORD': 'password123',
-        'HOST': 'db',  #  Name of service in docker-compose
+        'PASSWORD': 'password',
+        'HOST': 'user-mgmt-db',  #  Name of service in docker-compose
         'PORT': '3306',
     }
 }

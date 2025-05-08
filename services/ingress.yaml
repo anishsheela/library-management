@@ -24,3 +24,17 @@ spec:
             name: borrow-service
             port:
               number: 8080
+      - path: /user(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: user-mgmt-service
+            port:
+              number: 8000
+      - path: /notification(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: notification-service
+            port:
+              number: 8085

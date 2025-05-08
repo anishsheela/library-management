@@ -1,0 +1,36 @@
+# User Management Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-mgmt-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-mgmt-service
+  template:
+    metadata:
+      labels:
+        app: user-mgmt-service
+    spec:
+      containers:
+      - name: user-mgmt-service
+        image: library/user-mgmt-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+---
+# User Management Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-mgmt-service
+spec:
+  selector:
+    app: user-mgmt-service
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+
