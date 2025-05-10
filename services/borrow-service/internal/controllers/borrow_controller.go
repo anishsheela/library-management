@@ -150,8 +150,8 @@ func GetOverdueBorrowings(w http.ResponseWriter, r *http.Request) {
         overdueBorrowings[userID] = append(overdueBorrowings[userID], info)
         message, _ := json.Marshal(map[string]interface{}{
             "userId": userID,
-            "bookId": bookID,
-            "dueDate": dueDate,
+            "bookId": info.BookID,
+            "dueDate": info.DueDate,
             "notification": "Your book is overdue!",
         })
         db.PublishEvent("book.overdue", string(message))
