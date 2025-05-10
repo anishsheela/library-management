@@ -55,6 +55,7 @@ func BorrowBook(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Failed to borrow book", http.StatusInternalServerError)
         return
     }
+    // Call book service to update availability
     jsonBody := bytes.NewBuffer([]byte(`{"available":false}`))
     updateBookURL := fmt.Sprintf("%s/books/%s", bookServiceURL, request.BookID)
 	req, _ := http.NewRequest("PUT", updateBookURL, jsonBody)
@@ -89,10 +90,15 @@ func ReturnBook(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Failed to return book", http.StatusInternalServerError)
         return
     }
+    // Call book service to update availability
     updateBookURL := fmt.Sprintf("%s/books/%s", bookServiceURL, request.BookID)
     jsonBody := bytes.NewBuffer([]byte(`{"available":true}`))
 	req, _ := http.NewRequest("PUT", updateBookURL, jsonBody)
     httpClient.Do(req)
+    // Publish event to Kafka
+    message := fmt.Sprintf(`{"bookId":"%s","status":"available"}`, request.UserID, request.BookID)
+    PublishEvent("book.available_reserved", message)
+
     w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(map[string]string{"message": "Book returned successfully"})
 }
@@ -142,6 +148,13 @@ func GetOverdueBorrowings(w http.ResponseWriter, r *http.Request) {
         }
         info.DueDate = borrowDate.Add(14 * 24 * time.Hour)
         overdueBorrowings[userID] = append(overdueBorrowings[userID], info)
+        message, _ := json.Marshal(map[string]interface{}{
+            "userId": userID,
+            "bookId": bookID,
+            "dueDate": dueDate,
+            "notification": "Your book is overdue!",
+        })
+        PublishEvent("book.overdue", string(message))
     }
     if len(overdueBorrowings) == 0 {
         http.Error(w, "No overdue borrowings found", http.StatusNotFound)
