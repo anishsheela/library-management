@@ -97,7 +97,7 @@ func ReturnBook(w http.ResponseWriter, r *http.Request) {
     httpClient.Do(req)
     // Publish event to Kafka
     message := fmt.Sprintf(`{"bookId":"%s","status":"available"}`, request.UserID, request.BookID)
-    PublishEvent("book.available_reserved", message)
+    db.PublishEvent("book.available_reserved", message)
 
     w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(map[string]string{"message": "Book returned successfully"})
@@ -154,7 +154,7 @@ func GetOverdueBorrowings(w http.ResponseWriter, r *http.Request) {
             "dueDate": dueDate,
             "notification": "Your book is overdue!",
         })
-        PublishEvent("book.overdue", string(message))
+        db.PublishEvent("book.overdue", string(message))
     }
     if len(overdueBorrowings) == 0 {
         http.Error(w, "No overdue borrowings found", http.StatusNotFound)
