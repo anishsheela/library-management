@@ -1,12 +1,8 @@
-package controllers
+package db
 
 import (
-    "borrow-service/internal/db"
-    "encoding/json"
-    "net/http"
     "fmt"
 	"os"
-    "time"
     "github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
