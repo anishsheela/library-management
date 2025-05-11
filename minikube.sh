@@ -90,4 +90,8 @@ popd >/dev/null
 # Ingress
 apply_k8s_config "Ingress Controller" "$WORK_DIR/services/ingress.yaml"
 
+# Kafka
+apply_k8s_config "Kafka" "$WORK_DIR/services/kafka.yaml"
+apply_k8s_config "Kafka Init Script" "$WORK_DIR/services/kafka-init.yaml"
+
 announce "All services deployed successfully."
