@@ -38,7 +38,7 @@ spec:
         - containerPort: 8080
         env:
         - name: KAFKA_BROKER
-          value: "notification-kafka-bootstrap.default.svc:9092"
+          value: "kafka-service.default.svc:9092"
         - name: KAFKA_USERNAME
           value: ""
         - name: KAFKA_PASSWORD
