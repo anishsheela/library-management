@@ -46,13 +46,16 @@ announce "Setting up Ingress..."
 minikube addons enable ingress
 
 announce "Building Docker images..."
-for service_dir in book-service borrow-service NotificationService; do
+for service_dir in book-service borrow-service NotificationService user-mgmt-service; do
     case $service_dir in
         book-service)
             image_name="library/book-service:latest"
             ;;
         borrow-service)
             image_name="library/borrow-service:latest"
+            ;;
+        user-mgmt-service)
+            image_name="library/user-mgmt-service:latest"
             ;;
         NotificationService)
             image_name="library/notification:latest"
@@ -85,7 +88,7 @@ apply_k8s_config "BookService Deployment" "book-service/book-service.yaml"
 apply_k8s_config "BorrowService MySQL" "borrow-service/mysql.yaml"
 apply_k8s_config "BorrowService Deployment" "borrow-service/borrow-service.yaml"
 
-# Borrow Service
+# User Management Service
 apply_k8s_config "User Management MySQL" "user-mgmt-service/mysql.yaml"
 apply_k8s_config "User Management Deployment" "user-mgmt-service/borrow-service.yaml"
 
